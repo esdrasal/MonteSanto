@@ -1,3 +1,22 @@
+let currentTimer = null;
+let timerInterval = null;
+let startTime = '09:54'; // Hora predeterminada
+
+// Actualiza el reloj cada segundo
+setInterval(updateClock, 1000);
+
+// Actualiza el reloj inmediatamente al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+    updateClock();
+    // Cambiar al modo de pantalla completa al cargar la página
+    requestFullscreen(document.documentElement);
+});
+
+// Cambiar al modo de pantalla completa cuando se hace clic en la página
+document.addEventListener('click', () => {
+    requestFullscreen(document.documentElement);
+});
+
 function updateClock() {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, '0');
@@ -5,10 +24,44 @@ function updateClock() {
     const seconds = now.getSeconds().toString().padStart(2, '0');
     document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
 
-    // Verifica si es 9:55 AM
-    if (hours === '09' && minutes === '54' && seconds === '59') {
-        startCountdown(5 * 60, "Iniciamos en:", startSecondCountdown); //5 minutos para iniciar
+    if (startTime) {
+        const [startHours, startMinutes] = startTime.split(':').map(Number);
+        if (hours === startHours.toString().padStart(2, '0') && minutes === startMinutes.toString().padStart(2, '0') && seconds === '00') {
+            startCountdownSequence();
+        }
     }
+}
+
+function setStartTime() {
+    const timeInput = document.getElementById('start-time').value;
+    if (timeInput) {
+        startTime = timeInput;
+        alert(`Hora de inicio establecida a las ${startTime}`);
+    } else {
+        alert('Por favor, ingresa una hora válida.');
+    }
+}
+
+function startCountdownSequence() {
+    const sequences = [
+        { duration: 5 * 60, message: "Iniciamos en:", next: 1 },
+        { duration: 5 * 60, message: "Apertura:", next: 2 },
+        { duration: 35 * 60, message: "Alabanza:", next: 3 },
+        { duration: 5 * 60, message: "Anuncios y transición:", next: 4 },
+        { duration: 30 * 60, message: "Estudio Bíblico:", next: 5 },
+        { duration: 5 * 60, message: "Ministración:", next: 6 },
+        { duration: 20 * 60, message: "Santa Cena y ofrendas:", next: 7 },
+        { duration: 0, message: "El servicio ha concluido", next: null }
+    ];
+
+    function nextSequence(index) {
+        if (index < sequences.length) {
+            const { duration, message, next } = sequences[index];
+            startCountdown(duration, message, () => nextSequence(next));
+        }
+    }
+
+    nextSequence(0);
 }
 
 function startCountdown(duration, message, callback) {
@@ -16,30 +69,18 @@ function startCountdown(duration, message, callback) {
     const timerElement = document.getElementById('countdown-timer');
 
     messageElement.textContent = message;
-    messageElement.style.display = 'block'; // Muestra el mensaje en bloque para forzar el salto de línea
-    timerElement.style.color = 'black'; // Asegura que el texto comience en negro
-    timerElement.style.display = 'block'; // Muestra el temporizador en bloque para forzar el salto de línea
+    messageElement.style.display = 'block';
+    timerElement.style.color = 'black';
+    timerElement.style.display = 'block';
 
-    let timer = duration, minutes, seconds;
+    currentTimer = duration;
+    if (timerInterval) clearInterval(timerInterval);
 
-    const interval = setInterval(() => {
-        minutes = Math.floor(timer / 60);
-        seconds = timer % 60;
-        minutes = minutes.toString().padStart(2, '0');
-        seconds = seconds.toString().padStart(2, '0');
+    timerInterval = setInterval(() => {
+        updateTimerDisplay();
 
-        if (timer <= 10 * 60 && timer > 2 * 60) { // Cambia el color a azul cuando faltan 10 minutos
-            timerElement.style.color = 'blue';
-        } else if (timer <= 2 * 60) { // Cambia el color a rojo cuando faltan 2 minutos
-            timerElement.style.color = 'red';
-        } else {
-            timerElement.style.color = 'black';
-        }
-
-        timerElement.textContent = `${minutes}:${seconds}`;
-
-        if (--timer < 0) {
-            clearInterval(interval);
+        if (--currentTimer < 0) {
+            clearInterval(timerInterval);
             if (callback) {
                 callback();
             } else {
@@ -50,72 +91,36 @@ function startCountdown(duration, message, callback) {
     }, 1000);
 }
 
-function startSecondCountdown() {
-    const messageElement = document.getElementById('countdown-message');
+function updateTimerDisplay() {
     const timerElement = document.getElementById('countdown-timer');
+    const minutes = Math.floor(currentTimer / 60).toString().padStart(2, '0');
+    const seconds = (currentTimer % 60).toString().padStart(2, '0');
 
-    messageElement.textContent = "Apertura:";
-    startCountdown(5 * 60, "Apertura:", startAlabanzaCountdown); //5 mimnutos de apertura
-}
-
-function startAlabanzaCountdown() {
-    const messageElement = document.getElementById('countdown-message');
-    const timerElement = document.getElementById('countdown-timer');
-
-    messageElement.textContent = "Alabanza:";
-    startCountdown(35 * 60, "Alabanza:", startAnunciosCountdown); //35 min de alabanza
-}
-
-function startAnunciosCountdown() {
-    const messageElement = document.getElementById('countdown-message');
-    const timerElement = document.getElementById('countdown-timer');
-
-    messageElement.textContent = "Anuncios y transición:";
-    startCountdown(5 * 60, "Anuncios y transición:", startEstudioCountdown); //5 minutos de anuncios y transición
-}
-
-function startEstudioCountdown() {
-    const messageElement = document.getElementById('countdown-message');
-    const timerElement = document.getElementById('countdown-timer');
-
-    messageElement.textContent = "Estudio Bíblico:";
-    startCountdown(30 * 60, "Estudio Bíblico:", startMinistracionCountdown); //30 mintuos de Estudio Bíblico
-}
-
-function startMinistracionCountdown() {
-    const messageElement = document.getElementById('countdown-message');
-    const timerElement = document.getElementById('countdown-timer');
-
-    messageElement.textContent = "Ministración y Santa Cena";
-    startCountdown(20 * 60, "Ministración y Santa Cena:", startOfrendaCountdown); //20 min de ministración
-}
-
-function startOfrendaCountdown() {
-    const messageElement = document.getElementById('countdown-message');
-    const timerElement = document.getElementById('countdown-timer');
-
-    messageElement.textContent = "Ofrenda y anuncios:";
-    startCountdown(10 * 60, "Ofrenda y anuncios:"); //10 min de ofrenda
-}
-// Solicitar modo de pantalla completa al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-    const container = document.documentElement; // Selecciona el elemento raíz del documento (todo el documento)
-    if (container.requestFullscreen) { // Verifica si el navegador soporta el modo de pantalla completa
-        container.requestFullscreen(); // Solicita el modo de pantalla completa
-    } else if (container.webkitRequestFullscreen) { // Para navegadores WebKit (como Safari)
-        container.webkitRequestFullscreen();
-    } else if (container.msRequestFullscreen) { // Para Internet Explorer
-        container.msRequestFullscreen();
+    if (currentTimer <= 10 * 60 && currentTimer > 2 * 60) {
+        timerElement.style.color = 'blue';
+    } else if (currentTimer <= 2 * 60) {
+        timerElement.style.color = 'red';
+    } else {
+        timerElement.style.color = 'black';
     }
-});
 
-// Cambiar al modo de pantalla completa cuando se hace clic en la página
-document.addEventListener('click', () => {
-    const container = document.getElementById('container');
-    container.requestFullscreen(); // Solicita el modo de pantalla completa al hacer clic en la página
-});
-// Actualiza el reloj inmediatamente al cargar la página
-updateClock();
+    timerElement.textContent = `${minutes}:${seconds}`;
+}
 
-// Actualiza el reloj cada segundo
-setInterval(updateClock, 1000);
+function adjustTimer(minutes) {
+    if (currentTimer !== null) {
+        currentTimer += minutes * 60;
+        if (currentTimer < 0) currentTimer = 0;
+        updateTimerDisplay();
+    }
+}
+
+function requestFullscreen(element) {
+    if (element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
