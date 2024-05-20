@@ -24,7 +24,7 @@ function updateClock() {
     document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
 
     // Verifica si es 9:55 AM
-    if (hours === '19' && minutes === '39' && seconds === '10') {
+    if (hours === '20' && minutes === '00' && seconds === '00') {
         startCountdownSequence();
     }
 }
