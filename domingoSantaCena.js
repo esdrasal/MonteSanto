@@ -1,6 +1,6 @@
 let currentTimer = null;
 let timerInterval = null;
-let startTime = '09:54'; // Hora predeterminada
+let startTime = '09:55'; // Hora predeterminada
 
 // Actualiza el reloj cada segundo
 setInterval(updateClock, 1000);
