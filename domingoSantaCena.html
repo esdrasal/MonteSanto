@@ -8,9 +8,16 @@
 </head>
 <body>
     <div id="container">
-        <h1 id="clock">Hora Actual</h1>
+        <h1 id="clock"></h1>
         <div id="countdown-message"></div>
         <div id="countdown-timer" class="timer"></div>
+        <div id="controls">
+            <input type="time" id="start-time" placeholder="HH:MM">
+            <button onclick="setStartTime()">Hora de Inicio</button>
+            <button onclick="adjustTimer(-5)">-5 Min</button>
+            <button onclick="adjustTimer(-1)">-1 Min</button>
+            <button onclick="adjustTimer(1)">+1 Min</button>
+            <button onclick="adjustTimer(5)">+5 Min</button>      </div>
     </div>
     <script src="domingo.js"></script>
 </body>
