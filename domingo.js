@@ -1,5 +1,6 @@
 let currentTimer = null;
 let timerInterval = null;
+let startTime = '09:54'; // Hora predeterminada
 
 // Actualiza el reloj cada segundo
 setInterval(updateClock, 1000);
@@ -23,9 +24,21 @@ function updateClock() {
     const seconds = now.getSeconds().toString().padStart(2, '0');
     document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
 
-    // Verifica si es 9:55 AM
-    if (hours === '20' && minutes === '00' && seconds === '00') {
-        startCountdownSequence();
+    if (startTime) {
+        const [startHours, startMinutes] = startTime.split(':').map(Number);
+        if (hours === startHours.toString().padStart(2, '0') && minutes === startMinutes.toString().padStart(2, '0') && seconds === '59') {
+            startCountdownSequence();
+        }
+    }
+}
+
+function setStartTime() {
+    const timeInput = document.getElementById('start-time').value;
+    if (timeInput) {
+        startTime = timeInput;
+        alert(`Hora de inicio establecida a las ${startTime}`);
+    } else {
+        alert('Por favor, ingresa una hora válida.');
     }
 }
 
