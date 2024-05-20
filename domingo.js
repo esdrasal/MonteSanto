@@ -26,7 +26,7 @@ function updateClock() {
 
     if (startTime) {
         const [startHours, startMinutes] = startTime.split(':').map(Number);
-        if (hours === startHours.toString().padStart(2, '0') && minutes === startMinutes.toString().padStart(2, '0') && seconds === '59') {
+        if (hours === startHours.toString().padStart(2, '0') && minutes === startMinutes.toString().padStart(2, '0') && seconds === '00') {
             startCountdownSequence();
         }
     }
