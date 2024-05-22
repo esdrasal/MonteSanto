@@ -4,12 +4,16 @@ let startTime = '09:55'; // Hora predeterminada
 
 // Actualiza el reloj cada segundo
 setInterval(updateClock, 1000);
+modificadores.style.display = 'block';
 
 // Actualiza el reloj inmediatamente al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
     updateClock();
     // Cambiar al modo de pantalla completa al cargar la página
     requestFullscreen(document.documentElement);
+
+    const modificadores = document.getElementById('modificadores');
+    modificadores.style.display = 'none';
 });
 
 // Cambiar al modo de pantalla completa cuando se hace clic en la página
@@ -67,11 +71,18 @@ function startCountdownSequence() {
 function startCountdown(duration, message, callback) {
     const messageElement = document.getElementById('countdown-message');
     const timerElement = document.getElementById('countdown-timer');
+    const modificadores = document.getElementById('modificadores');
+    const horaInicio = document.getElementById('controls');
+
 
     messageElement.textContent = message;
     messageElement.style.display = 'block';
     timerElement.style.color = 'black';
     timerElement.style.display = 'block';
+    modificadores.style.display = 'block';
+    modificadores.style.position = 'relative';
+    modificadores.style.justifyContent = 'row';
+    horaInicio.style.display = 'none';
 
     currentTimer = duration;
     if (timerInterval) clearInterval(timerInterval);
