@@ -54,3 +54,7 @@ button {
 button:hover {
     background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
 }
+
+#modificadores {
+    display: block;
+}
